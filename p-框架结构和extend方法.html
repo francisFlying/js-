@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+</body>
+<script>
+    (function(window){
+        var arr=[];
+        var push=arr.push;
+        var splice=arr.push;
+        var slice=arr.slice;
+
+        //选择器函数
+        function Sizzle(selector){
+            return document.querySelectorAll(selector);
+        }
+        function jQuery(seletor){
+            return new jQuery.fn.F(selector);
+        }
+        jQuery.fn=jQuery.prototype={
+            constructor:jQuery,
+            //构造函数F
+            F:function(){
+                //将this中原有的dom元素清空（实现链式编程）
+                splice.call(this,0,this.length);
+
+                //将elements中的每一个dom元素以伪数组的形式存入构造函数的实例（this）中
+                slice.apply(this,Sizzle(selector));
+
+                return this;
+            },
+
+            //添加css方法
+            css:function(styleName,styleValue){
+                for(var i=0;i<this.length;i++){
+                    var ele = this[i];
+                    ele[styleName]=styleValue;
+                }
+
+                //实现链式编程
+                return this;
+            }
+        };
+        //封装extend方法
+        jQuery.fn.extend=jQuery.extend=function(){
+            var target,sources;
+            if(arguments.length==0) return this;
+            var arg0=arguments[0];
+            if(arguments.length==1){
+                //如果传递1个参数，将这个参数的属性和方法拷贝到this中
+                target=this;
+                sources=[arg0];
+            }else{
+                //如果传递多个参数，将第二个及其以后的参数的属性和方法拷贝到第一个参数中
+                target=arg0;
+                sources=slice.call(arguments,1);
+            }
+
+            //遍历sources
+            for(var i=0;i<sources.length;i++){
+                var source = sources[i];
+                for(var key in source){
+                    target[key]=source[key];
+                }
+            }
+            return target;
+        };
+
+        //设置构造函数F的原型指向jQuery的原型
+        jQuery.fn.F.prototype=jQuery.fn;
+
+        window.$=window.jQuery=jQuery;
+    })(window);
+</script>
+<script>
+    //测试：传递一个参数
+    //$.extend({a:11,b:12,c:13}).log;
+    //测试：传递多个参数
+    $.extend($,{a:111,b:222},{c:333,d:444});
+</script>
+</html>
